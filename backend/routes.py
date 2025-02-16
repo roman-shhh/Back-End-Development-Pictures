@@ -59,16 +59,17 @@ def get_picture_by_id(id):
 ######################################################################
 @app.route("/picture", methods=["POST"])
 def create_picture():
-    new_picture = request.json
+    picture_in = request.json
+    print(picture_in)
 
     for picture in data:
-        if new_picture["id"] == picture["id"]:
+        if picture_in["id"] == picture["id"]:
             return {
-                "Message": f"picture with id {new_picture['id']} already present"
+                "Message": f"picture with id {picture_in['id']} already present"
             }, 302
 
-    data.append(new_picture)
-    return new_picture, 201
+    data.append(picture_in)
+    return picture_in, 201
 
 ######################################################################
 # UPDATE A PICTURE
@@ -77,14 +78,14 @@ def create_picture():
 
 @app.route("/picture/<int:id>", methods=["PUT"])
 def update_picture(id):
-    updated_picture = request.get_json()
+    picture_in = request.json
 
-    for picture in data:
-        if picture['id'] == id:
-            picture.update(updated_picture)
-            return jsonify({"Message": "Picture updated successfully"}), 200
+    for index, picture in enumerate(data):
+        if picture["id"] == id:
+            data[index] = picture_in
+            return picture, 201
 
-    return jsonify({"Message": "picture not found"}), 404
+    return {"message": "picture not found"}, 404
 
 ######################################################################
 # DELETE A PICTURE
@@ -94,6 +95,6 @@ def delete_picture(id):
     for picture in data:
         if picture["id"] == id:
             data.remove(picture)
-            return {}, 204
+            return "", 204
 
     return {"message": "picture not found"}, 404
